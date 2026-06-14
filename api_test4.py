@@ -1,20 +1,10 @@
 import pytest
+import requests
 
-def bmi_kalkulator (waga, wzrost):
-    return waga / (wzrost * wzrost)
 
-def test_bmi_kalkulator ():
-    assert round(bmi_kalkulator(70, 1.75), 2) == 22.86
-
-@pytest.mark.parametrize("waga, wzrost, oczekiwane", [
-    (70, 1.75, 22.86),
-    (50, 1.60, 19.53),
-    (90, 1.80, 27.78)
-])
-
-def test_bmi_parametrize(waga, wzrost, oczekiwane):
-    assert round(bmi_kalkulator(waga, wzrost), 2) == oczekiwane
-
-def test_zero():
-    with pytest.raises(ZeroDivisionError):
-        bmi_kalkulator(70,0)
+@pytest.mark.parametrize("post_id", [1,2,3])
+def test_posty_istnieja(post_id):
+    response = requests.get(f"https://jsonplaceholder.typicode.com/posts/{post_id}")
+    assert response.status_code == 200
+    assert "title" in response.json()
+    assert "body" in response.json()
