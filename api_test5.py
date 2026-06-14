@@ -1,11 +1,16 @@
-import pytest
+import requests
 
-from api_test4 import bmi_kalkulator
-
-
-@pytest.fixture
-def przykladowy_pacjent():
-    return {"waga": 80, "wzrost": 1.67}
-
-def test_bmi_normalny(przykladowy_pacjent):
-    assert round(bmi_kalkulator(przykladowy_pacjent["waga"], przykladowy_pacjent["wzrost"]), 2) == 28.69
+def test_post_nowy():
+    nowy_post = {
+        "title": "Mój test",
+        "body": "To jest testowy post",
+        "userId": 1
+    }
+    response = requests.post(
+        "https://jsonplaceholder.typicode.com/posts",
+        json=nowy_post
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["title"]  == "Mój test"
+    assert data["userId"] == 1
