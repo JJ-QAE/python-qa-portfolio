@@ -18,3 +18,4 @@ def test_blank_response():
     )
     assert response.status_code == 404
     assert response.json() == {}
+
