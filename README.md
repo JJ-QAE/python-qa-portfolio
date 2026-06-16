@@ -5,36 +5,27 @@ Built while learning QA Automation from scratch.
 
 ---
 
-## 🧪 pytest — Unit Tests
-
-| File | What it tests |
-|------|--------------|
-| `kalkulator.py` + `test_kalkulator.py` | Math functions with parametrize and fixtures |
-| `api_test4.py` | BMI calculator — parametrize, raises, basic assert |
-| `api_test5.py` | pytest fixture with dictionary |
-
----
-
 ## 🌐 API Tests — requests + pytest
 
 | File | What it tests |
 |------|--------------|
-| `api_test2.py` | GET single post — status code, JSON structure |
-| `api_test3.py` | GET list — type(), len() validation |
-| `api_test4.py` | GET with parametrize — multiple endpoints |
-| `api_test5.py` | POST — create new resource, status 201 |
-| `api_test6.py` | conftest.py — shared fixture across files |
-| `api_test7.py` | GET + POST combined in one file |
-| `api_test8.py` | PUT and DELETE |
-| `api_test9.py` | Error handling — 404, wrong endpoint, empty response |
-| `test_posts_api.py` | **Mini project** — complete API test suite |
+| `api_test.py` | GET single post — status code, title, userId, JSON value validation |
+| `api_test2.py` | GET single post with fixture — status code, title, userId, id value |
+| `api_test3.py` | GET list with fixture — status code, type(), len() == 100 |
+| `api_test4.py` | GET with parametrize — status code, title and body validation |
+| `api_test5.py` | POST — create new resource, status 201, data validation |
+| `api_test6.py` | conftest.py shared fixture — GET status and title |
+| `api_test7.py` | GET + POST combined — fixture for GET, requests.post() for POST |
+| `api_test8.py` | PUT and DELETE — update and remove existing post |
+| `api_test9.py` | Error handling — 404 not found, wrong endpoint, empty response |
+| `test_posts_api.py` | **Mini project** — complete API test suite: GET, POST, PUT, DELETE, 404, parametrize |
 
 ---
 
 ## ⚙️ Configuration
 
 - `conftest.py` — shared fixtures available across all test files
-- `pytest.ini` — pytest configuration, custom file discovery
+- `pytest.ini` — pytest configuration, custom file discovery (`api_test*.py`)
 
 ---
 
@@ -51,7 +42,7 @@ Built while learning QA Automation from scratch.
 
 - HTTP methods: GET, POST, PUT, DELETE
 - Status code validation (200, 201, 404)
-- JSON structure validation
+- JSON structure and value validation
 - pytest: assert, parametrize, fixture, raises
 - conftest.py shared fixtures
 - Error handling and negative test cases
