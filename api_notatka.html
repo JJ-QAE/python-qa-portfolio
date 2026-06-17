@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Tests – Notatka</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --bg: #0f0f13; --surface: #1a1a22; --border: #2e2e3e; --text: #e8e6f0; --muted: #8884a0; --accent: #a78bfa; --accent2: #34d399; --accent3: #f472b6; --accent4: #fb923c; --accent5: #60a5fa; --code-bg: #12121a; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); padding: 2rem 1rem 4rem; min-height: 100vh; }
+  .container { max-width: 780px; margin: 0 auto; }
+  header { margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: -1px; }
+  header h1 span { color: var(--accent5); }
+  header p { color: var(--muted); margin-top: 0.5rem; font-size: 0.95rem; }
+  .nav { display: flex; gap: 0.75rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+  .nav a { background: var(--surface); border: 1px solid var(--border); color: var(--muted); text-decoration: none; padding: 0.4rem 1rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; transition: all 0.2s; }
+  .nav a:hover, .nav a.active { border-color: var(--accent5); color: var(--accent5); }
+  .section { margin-bottom: 2.5rem; }
+  .section-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--accent5); margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1rem; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; transition: border-color 0.2s; }
+  .card:hover { border-color: var(--accent5); }
+  .card-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.6rem; }
+  .card-desc { font-size: 0.88rem; color: var(--muted); margin-bottom: 0.75rem; line-height: 1.6; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1rem; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.7; }
+  .kw { color: var(--accent); } .fn { color: var(--accent2); } .st { color: var(--accent3); } .cm { color: var(--muted); font-style: italic; } .nu { color: var(--accent4); }
+  .tip { background: #0f1e2e; border-left: 3px solid var(--accent5); border-radius: 0 8px 8px 0; padding: 0.75rem 1rem; font-size: 0.85rem; color: var(--muted); margin-top: 2rem; line-height: 1.6; }
+  .tip strong { color: var(--text); }
+  .badge { display: inline-block; font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; margin-bottom: 0.5rem; }
+  .b-purple { background: #2d1f5e; color: var(--accent); } .b-green { background: #0f2e22; color: var(--accent2); } .b-pink { background: #2e0f1f; color: var(--accent3); } .b-orange { background: #2e1a0f; color: var(--accent4); } .b-blue { background: #0f1e2e; color: var(--accent5); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>API <span>Tests</span></h1>
+    <p>Testowanie REST API z requests i pytest 🌐</p>
+  </header>
+  <div class="nav">
+    <a href="python_notatka.html">🐍 Python</a>
+    <a href="pytest_notatka.html">🧪 Pytest</a>
+    <a href="api_notatka.html" class="active">🌐 API Tests</a>
+    <a href="git_notatka.html">🐙 Git</a>
+  </div>
+
+  <!-- PODSTAWY -->
+  <div class="section">
+    <div class="section-title">Podstawy</div>
+    <div class="cards">
+      <div class="card">
+        <div class="badge b-green">requests.get()</div>
+        <div class="card-label">Wyślij zapytanie GET</div>
+        <div class="card-desc">Zawsze przypisuj wynik do zmiennej response — bez tego nie możesz sprawdzić odpowiedzi!</div>
+        <pre><span class="kw">import</span> requests
+
+<span class="cm"># ZAWSZE response = requests.get()</span>
+<span class="cm"># NIE: return requests.get() ← asercje nie zadziałają!</span>
+response = requests.<span class="fn">get</span>(<span class="st">"https://api.example.com/posts/1"</span>)
+<span class="fn">print</span>(response.status_code)  <span class="cm"># 200</span>
+<span class="fn">print</span>(response.<span class="fn">json</span>())       <span class="cm"># dane jako słownik</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="badge b-green">status codes</div>
+        <div class="card-label">Kody odpowiedzi</div>
+        <div class="card-desc">Zawsze sprawdzaj status code w testach API. POST zwraca 201 a nie 200!</div>
+        <pre><span class="nu">200</span>  <span class="cm"># OK ✅ — GET, PUT, DELETE</span>
+<span class="nu">201</span>  <span class="cm"># Created ✅ — POST (nowy zasób)</span>
+<span class="nu">404</span>  <span class="cm"># Not Found ❌</span>
+<span class="nu">400</span>  <span class="cm"># Bad Request ❌ — złe dane</span>
+<span class="nu">500</span>  <span class="cm"># Server Error ❌</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- METODY HTTP -->
+  <div class="section">
+    <div class="section-title">Metody HTTP</div>
+    <div class="cards">
+      <div class="card">
+        <div class="badge b-blue">GET</div>
+        <div class="card-label">Pobierz dane</div>
+        <div class="card-desc">Pobiera dane z serwera. Najczęściej używana metoda.</div>
+        <pre>response = requests.<span class="fn">get</span>(
+    <span class="st">"https://jsonplaceholder.typicode.com/posts/1"</span>
+)
+<span class="kw">assert</span> response.status_code == <span class="nu">200</span>
+<span class="kw">assert</span> <span class="st">"title"</span> <span class="kw">in</span> response.<span class="fn">json</span>()</pre>
+      </div>
+
+      <div class="card">
+        <div class="badge b-green">POST</div>
+        <div class="card-label">Stwórz nowe dane</div>
+        <div class="card-desc">Wysyła nowe dane do serwera. Wymaga json=słownik. Zwraca 201!</div>
+        <pre>new_post = {
+    <span class="st">"title"</span>: <span class="st">"Test"</span>,
+    <span class="st">"body"</span>: <span class="st">"Content"</span>,
+    <span class="st">"userId"</span>: <span class="nu">1</span>
+}
+response = requests.<span class="fn">post</span>(
+    <span class="st">"https://jsonplaceholder.typicode.com/posts"</span>,
+    json=new_post    <span class="cm"># ← json= wysyła słownik!</span>
+)
+<span class="kw">assert</span> response.status_code == <span class="nu">201</span>   <span class="cm"># POST → 201!</span>
+<span class="kw">assert</span> response.<span class="fn">json</span>()[<span class="st">"title"</span>] == <span class="st">"Test"</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="badge b-orange">PUT</div>
+        <div class="card-label">Zaktualizuj dane</div>
+        <div class="card-desc">Aktualizuje istniejący zasób. URL musi zawierać ID posta.</div>
+        <pre>response = requests.<span class="fn">put</span>(
+    <span class="st">"https://jsonplaceholder.typicode.com/posts/1"</span>,
+    json={<span class="st">"title"</span>: <span class="st">"Nowy tytuł"</span>}
+)
+<span class="kw">assert</span> response.status_code == <span class="nu">200</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="badge b-pink">DELETE</div>
+        <div class="card-label">Usuń dane</div>
+        <div class="card-desc">Usuwa zasób. Nie wysyłasz żadnych danych — tylko URL.</div>
+        <pre>response = requests.<span class="fn">delete</span>(
+    <span class="st">"https://jsonplaceholder.typicode.com/posts/1"</span>
+)
+<span class="kw">assert</span> response.status_code == <span class="nu">200</span>
+
+<span class="cm"># GET    → 200  | POST  → 201</span>
+<span class="cm"># PUT    → 200  | DELETE → 200</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- BŁĘDY -->
+  <div class="section">
+    <div class="section-title">Testowanie błędów</div>
+    <div class="cards">
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="badge b-pink">404 i pusta odpowiedź</div>
+        <div class="card-label">Status code to za mało — sprawdzaj też ciało</div>
+        <div class="card-desc">Sam status code to za mało — sprawdzaj też ciało odpowiedzi. 404 powinien zwracać pusty obiekt {}.</div>
+        <pre><span class="cm"># nieistniejący post → 404</span>
+<span class="kw">def</span> <span class="fn">test_not_found</span>():
+    response = requests.<span class="fn">get</span>(
+        <span class="st">"https://jsonplaceholder.typicode.com/posts/99999"</span>
+    )
+    <span class="kw">assert</span> response.status_code == <span class="nu">404</span>
+
+<span class="cm"># nieistniejący endpoint → 404</span>
+<span class="kw">def</span> <span class="fn">test_wrong_endpoint</span>():
+    response = requests.<span class="fn">get</span>(
+        <span class="st">"https://jsonplaceholder.typicode.com/doesntexist"</span>
+    )
+    <span class="kw">assert</span> response.status_code == <span class="nu">404</span>
+
+<span class="cm"># 404 + sprawdzamy że ciało jest puste</span>
+<span class="kw">def</span> <span class="fn">test_empty_response</span>():
+    response = requests.<span class="fn">get</span>(
+        <span class="st">"https://jsonplaceholder.typicode.com/posts/99999"</span>
+    )
+    <span class="kw">assert</span> response.status_code == <span class="nu">404</span>
+    <span class="kw">assert</span> response.<span class="fn">json</span>() == {}   <span class="cm"># puste ciało odpowiedzi</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINI PROJEKT -->
+  <div class="section">
+    <div class="section-title">Mini projekt — kompletny zestaw testów</div>
+    <div class="cards">
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="badge b-purple">test_posts_api.py</div>
+        <div class="card-label">Wszystko w jednym pliku</div>
+        <div class="card-desc">Kompletny zestaw testów dla jednego API — GET, POST, PUT, DELETE, 404, parametrize. fixture z conftest dla GET — bez importu. POST bez fixture — requests.post() bezpośrednio.</div>
+        <pre><span class="kw">import</span> pytest
+<span class="kw">import</span> requests
+
+<span class="cm"># GET — lista wszystkich postów</span>
+<span class="kw">def</span> <span class="fn">test_posts_api</span>():
+    response = requests.<span class="fn">get</span>(<span class="st">"https://jsonplaceholder.typicode.com/posts"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="nu">200</span>
+    <span class="kw">assert</span> <span class="fn">len</span>(response.<span class="fn">json</span>()) == <span class="nu">100</span>
+
+<span class="cm"># POST — json= wysyła słownik, status 201!</span>
+<span class="kw">def</span> <span class="fn">test_new_post</span>():
+    new_post = {<span class="st">"title"</span>: <span class="st">"Test"</span>, <span class="st">"body"</span>: <span class="st">"Content"</span>, <span class="st">"userId"</span>: <span class="nu">1</span>}
+    response = requests.<span class="fn">post</span>(
+        <span class="st">"https://jsonplaceholder.typicode.com/posts"</span>,
+        json=new_post
+    )
+    <span class="kw">assert</span> response.status_code == <span class="nu">201</span>
+    <span class="kw">assert</span> response.<span class="fn">json</span>()[<span class="st">"title"</span>] == <span class="st">"Test"</span>
+
+<span class="cm"># PUT i DELETE — zawsze z ID posta w URL</span>
+<span class="kw">def</span> <span class="fn">test_update</span>():
+    response = requests.<span class="fn">put</span>(<span class="st">"https://jsonplaceholder.typicode.com/posts/1"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="nu">200</span>
+
+<span class="kw">def</span> <span class="fn">test_delete</span>():
+    response = requests.<span class="fn">delete</span>(<span class="st">"https://jsonplaceholder.typicode.com/posts/1"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="nu">200</span>
+
+<span class="cm"># 404</span>
+<span class="kw">def</span> <span class="fn">test_not_found</span>():
+    response = requests.<span class="fn">get</span>(<span class="st">"https://jsonplaceholder.typicode.com/posts/99999"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="nu">404</span>
+
+<span class="cm"># parametrize + f-string</span>
+@pytest.mark.parametrize(<span class="st">"post_id"</span>, [<span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>])
+<span class="kw">def</span> <span class="fn">test_posts_exist</span>(post_id):
+    response = requests.<span class="fn">get</span>(<span class="fn">f</span><span class="st">"https://jsonplaceholder.typicode.com/posts/{post_id}"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="nu">200</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip"><strong>Złota zasada API testów:</strong> zawsze <code>response = requests.get()</code> — nie return. GET używa fixture z conftest. POST nie używa fixture — requests.post() bezpośrednio z json=słownik. POST zwraca 201 a nie 200. f"...{zmienna}" wstawia zmienną do URL.</div>
+</div>
+</body>
+</html>

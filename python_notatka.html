@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python – Notatka</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --bg: #0f0f13; --surface: #1a1a22; --border: #2e2e3e; --text: #e8e6f0; --muted: #8884a0; --accent: #a78bfa; --accent2: #34d399; --accent3: #f472b6; --accent4: #fb923c; --code-bg: #12121a; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); padding: 2rem 1rem 4rem; min-height: 100vh; }
+  .container { max-width: 780px; margin: 0 auto; }
+  header { margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: -1px; }
+  header h1 span { color: var(--accent); }
+  header p { color: var(--muted); margin-top: 0.5rem; font-size: 0.95rem; }
+  .nav { display: flex; gap: 0.75rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+  .nav a { background: var(--surface); border: 1px solid var(--border); color: var(--muted); text-decoration: none; padding: 0.4rem 1rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; transition: all 0.2s; }
+  .nav a:hover, .nav a.active { border-color: var(--accent); color: var(--accent); }
+  .section { margin-bottom: 2.5rem; }
+  .section-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1rem; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; transition: border-color 0.2s; }
+  .card:hover { border-color: var(--accent); }
+  .card-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.6rem; }
+  .card-desc { font-size: 0.88rem; color: var(--muted); margin-bottom: 0.75rem; line-height: 1.6; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1rem; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.7; }
+  .kw { color: var(--accent); } .fn { color: var(--accent2); } .st { color: var(--accent3); } .cm { color: var(--muted); font-style: italic; } .nu { color: var(--accent4); }
+  .tip { background: #1e1a2e; border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 0.75rem 1rem; font-size: 0.85rem; color: var(--muted); margin-top: 2rem; line-height: 1.6; }
+  .tip strong { color: var(--text); }
+  .badge { display: inline-block; font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; margin-bottom: 0.5rem; }
+  .b-purple { background: #2d1f5e; color: var(--accent); } .b-green { background: #0f2e22; color: var(--accent2); } .b-pink { background: #2e0f1f; color: var(--accent3); } .b-orange { background: #2e1a0f; color: var(--accent4); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Python <span>Notatka</span></h1>
+    <p>Podstawy języka Python 🐍</p>
+  </header>
+  <div class="nav">
+    <a href="python_notatka.html" class="active">🐍 Python</a>
+    <a href="pytest_notatka.html">🧪 Pytest</a>
+    <a href="api_notatka.html">🌐 API Tests</a>
+    <a href="git_notatka.html">🐙 Git</a>
+  </div>
+
+  <!-- PODSTAWY -->
+  <div class="section">
+    <div class="section-title">Podstawy</div>
+    <div class="cards">
+      <div class="card"><div class="badge b-purple">print</div><div class="card-label">Wydrukuj coś</div><div class="card-desc">Wyświetla tekst lub zmienną w konsoli.</div><pre><span class="fn">print</span>(<span class="st">"Hello, world!"</span>)
+<span class="fn">print</span>(<span class="st">"Mam na imię "</span> + name)</pre></div>
+      <div class="card"><div class="badge b-purple">zmienna</div><div class="card-label">Przechowaj wartość</div><div class="card-desc">Zmienna to pudełko w którym trzymasz dane.</div><pre>name = <span class="st">"Jowita"</span>
+age = <span class="nu">21</span>
+<span class="fn">print</span>(<span class="st">"Cześć, "</span> + name)</pre></div>
+      <div class="card"><div class="badge b-green">input</div><div class="card-label">Zapytaj użytkownika</div><div class="card-desc">Zapisz odpowiedź w zmiennej żeby móc jej użyć.</div><pre>name = <span class="fn">input</span>(<span class="st">"Jak masz na imię? "</span>)
+<span class="fn">print</span>(<span class="st">"Cześć, "</span> + name)</pre></div>
+      <div class="card"><div class="badge b-green">int()</div><div class="card-label">Zamień tekst na liczbę</div><div class="card-desc">input() zawsze zwraca tekst — użyj int() jeśli potrzebujesz liczby.</div><pre>age = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Ile masz lat? "</span>))
+<span class="fn">print</span>(age + <span class="nu">10</span>)</pre></div>
+      <div class="card"><div class="badge b-green">float()</div><div class="card-label">Zamień tekst na liczbę z przecinkiem</div><div class="card-desc">Jak int() ale dla liczb z przecinkiem (np. wzrost, waga).</div><pre>wzrost = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"Wzrost (m)? "</span>))
+<span class="fn">print</span>(<span class="st">f"{wzrost:.1f}"</span>) <span class="cm"># :.1f = 1 miejsce po przecinku</span></pre></div>
+    </div>
+  </div>
+
+  <!-- STRINGI -->
+  <div class="section">
+    <div class="section-title">Stringi (tekst)</div>
+    <div class="cards">
+      <div class="card"><div class="badge b-orange">indeksowanie</div><div class="card-label">Pobierz znak ze stringa</div><div class="card-desc">Liczymy od 0. -1 to zawsze ostatni znak.</div><pre>word = <span class="st">"Python"</span>
+<span class="fn">print</span>(word[<span class="nu">0</span>])   <span class="cm"># P</span>
+<span class="fn">print</span>(word[-<span class="nu">1</span>])  <span class="cm"># n (ostatni)</span>
+<span class="fn">print</span>(<span class="fn">len</span>(word)) <span class="cm"># 6 (długość)</span></pre></div>
+      <div class="card"><div class="badge b-orange">łączenie</div><div class="card-label">Łącz stringi</div><div class="card-desc">Użyj + żeby skleić teksty razem.</div><pre>first = <span class="st">"Hej, "</span>
+second = <span class="st">"Jowita!"</span>
+<span class="fn">print</span>(first + second)
+<span class="cm"># Hej, Jowita!</span></pre></div>
+    </div>
+  </div>
+
+  <!-- PĘTLE -->
+  <div class="section">
+    <div class="section-title">Pętle</div>
+    <div class="cards">
+      <div class="card"><div class="badge b-pink">for loop</div><div class="card-label">Powtórz coś X razy</div><div class="card-desc">Wcięcie mówi Pythonowi co należy do pętli.</div><pre><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">1</span>, <span class="nu">11</span>):
+    <span class="fn">print</span>(i)  <span class="cm"># drukuje 1-10</span></pre></div>
+      <div class="card"><div class="badge b-pink">range()</div><div class="card-label">Generuj liczby</div><div class="card-desc">Trzy argumenty: start, stop (nie include!), krok.</div><pre><span class="fn">range</span>(<span class="nu">1</span>, <span class="nu">11</span>)     <span class="cm"># 1 do 10</span>
+<span class="fn">range</span>(<span class="nu">0</span>, <span class="nu">10</span>)     <span class="cm"># 0 do 9</span>
+<span class="fn">range</span>(<span class="nu">2</span>, <span class="nu">21</span>, <span class="nu">2</span>)  <span class="cm"># parzyste: 2,4,6...</span></pre></div>
+      <div class="card"><div class="badge b-pink">while loop</div><div class="card-label">Powtarzaj dopóki warunek prawdziwy</div><div class="card-desc">Używaj gdy nie wiesz ile razy pętla ma się wykonać.</div><pre><span class="kw">while</span> guess != answer:
+    <span class="fn">print</span>(<span class="st">"Spróbuj jeszcze raz!"</span>)
+    guess = <span class="fn">input</span>(<span class="st">"Odpowiedź: "</span>)
+<span class="fn">print</span>(<span class="st">"Dobrze!"</span>)</pre></div>
+      <div class="card"><div class="badge b-pink">for po liście</div><div class="card-label">Przejdź przez każdy element</div><div class="card-desc">Prostszy sposób niż range() gdy masz listę.</div><pre>fruits = [<span class="st">"jabłko"</span>, <span class="st">"banan"</span>]
+<span class="kw">for</span> item <span class="kw">in</span> fruits:
+    <span class="fn">print</span>(item)</pre></div>
+    </div>
+  </div>
+
+  <!-- FUNKCJE -->
+  <div class="section">
+    <div class="section-title">Funkcje</div>
+    <div class="cards">
+      <div class="card"><div class="badge b-purple">def</div><div class="card-label">Stwórz własną funkcję</div><div class="card-desc">Napisz raz, używaj ile razy chcesz.</div><pre><span class="kw">def</span> <span class="fn">greet</span>(name):
+    <span class="fn">print</span>(<span class="st">"Cześć, "</span> + name + <span class="st">"!"</span>)
+
+<span class="fn">greet</span>(<span class="st">"Jowita"</span>)</pre></div>
+      <div class="card"><div class="badge b-purple">return</div><div class="card-label">Zwróć wartość z funkcji</div><div class="card-desc">return pozwala użyć wyniku funkcji dalej w kodzie.</div><pre><span class="kw">def</span> <span class="fn">oblicz_bmi</span>(waga, wzrost):
+    <span class="kw">return</span> waga / (wzrost * wzrost)
+
+bmi = <span class="fn">oblicz_bmi</span>(<span class="nu">79</span>, <span class="nu">1.67</span>)
+<span class="fn">print</span>(<span class="st">f"BMI: {bmi:.1f}"</span>)</pre></div>
+      <div class="card"><div class="badge b-purple">if/elif/else</div><div class="card-label">Warunek</div><div class="card-desc">== sprawdza czy dwie rzeczy są równe.</div><pre><span class="kw">if</span> bmi &lt; <span class="nu">18.5</span>:
+    <span class="fn">print</span>(<span class="st">"niedowaga"</span>)
+<span class="kw">elif</span> bmi &lt;= <span class="nu">24.99</span>:
+    <span class="fn">print</span>(<span class="st">"prawidłowa"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"nadwaga"</span>)</pre></div>
+    </div>
+  </div>
+
+  <!-- LISTY -->
+  <div class="section">
+    <div class="section-title">Listy i Słowniki</div>
+    <div class="cards">
+      <div class="card"><div class="badge b-green">lista</div><div class="card-label">Zbiór elementów</div><div class="card-desc">Lista trzyma wiele rzeczy naraz w jednej zmiennej.</div><pre>fruits = [<span class="st">"jabłko"</span>, <span class="st">"banan"</span>, <span class="st">"wiśnia"</span>]
+<span class="fn">print</span>(fruits[<span class="nu">0</span>])   <span class="cm"># jabłko</span>
+fruits.<span class="fn">append</span>(<span class="st">"mango"</span>)
+<span class="fn">print</span>(<span class="fn">len</span>(fruits))  <span class="cm"># 4</span></pre></div>
+      <div class="card"><div class="badge b-green">słownik</div><div class="card-label">Klucz: wartość</div><div class="card-desc">Słownik przechowuje pary klucz-wartość.</div><pre>person = {<span class="st">"name"</span>: <span class="st">"Jowita"</span>, <span class="st">"age"</span>: <span class="nu">21</span>}
+<span class="fn">print</span>(person[<span class="st">"name"</span>])  <span class="cm"># Jowita</span>
+person[<span class="st">"city"</span>] = <span class="st">"Warsaw"</span></pre></div>
+    </div>
+  </div>
+
+  <!-- F-STRINGI -->
+  <div class="section">
+    <div class="section-title">F-stringi</div>
+    <div class="cards">
+      <div class="card"><div class="badge b-purple">f-string</div><div class="card-label">Wstaw zmienną do tekstu</div><div class="card-desc">Zamiast łączyć + możesz wstawić zmienną prosto w tekst używając {}.</div><pre>name = <span class="st">"Jowita"</span>
+score = <span class="nu">3</span>
+<span class="fn">print</span>(<span class="st">f"Cześć, {name}!"</span>)
+<span class="fn">print</span>(<span class="st">f"Wynik: {score}/5"</span>)
+
+<span class="cm"># w URL-ach:</span>
+post_id = <span class="nu">1</span>
+url = <span class="st">f"https://api.com/posts/{post_id}"</span></pre></div>
+    </div>
+  </div>
+
+  <!-- MODUŁY -->
+  <div class="section">
+    <div class="section-title">Moduły</div>
+    <div class="cards">
+      <div class="card"><div class="badge b-green">random</div><div class="card-label">Losuj elementy</div><div class="card-desc">random.choice() losuje jeden element z listy.</div><pre><span class="kw">import</span> random
+<span class="fn">print</span>(random.<span class="fn">choice</span>(<span class="st">"abcdef"</span>))
+<span class="cm"># wylosuje jedną literę</span></pre></div>
+      <div class="card"><div class="badge b-green">string</div><div class="card-label">Gotowe zestawy znaków</div><div class="card-desc">Nie musisz pisać wszystkich liter ręcznie.</div><pre><span class="kw">import</span> string
+string.<span class="fn">ascii_letters</span>  <span class="cm"># a-z A-Z</span>
+string.<span class="fn">digits</span>         <span class="cm"># 0-9</span>
+string.<span class="fn">punctuation</span>    <span class="cm"># !@#$%...</span></pre></div>
+      <div class="card"><div class="badge b-green">datetime</div><div class="card-label">Dzisiejsza data</div><div class="card-desc">Moduł datetime daje dostęp do daty i czasu.</div><pre><span class="kw">from</span> datetime <span class="kw">import</span> date
+dzisiaj = date.<span class="fn">today</span>()
+<span class="fn">print</span>(dzisiaj)  <span class="cm"># 2026-06-05</span></pre></div>
+    </div>
+  </div>
+
+  <!-- PLIKI -->
+  <div class="section">
+    <div class="section-title">Pliki i JSON</div>
+    <div class="cards">
+      <div class="card"><div class="badge b-purple">zapis "w"</div><div class="card-label">Zapisz do pliku</div><div class="card-desc">"w" = write. Nadpisuje plik.</div><pre><span class="kw">with</span> <span class="fn">open</span>(<span class="st">"plik.txt"</span>, <span class="st">"w"</span>) <span class="kw">as</span> plik:
+    plik.<span class="fn">write</span>(<span class="st">"Cześć!"</span>)</pre></div>
+      <div class="card"><div class="badge b-green">odczyt "r"</div><div class="card-label">Odczytaj plik</div><div class="card-desc">"r" = read. Odczytuje zawartość pliku.</div><pre><span class="kw">with</span> <span class="fn">open</span>(<span class="st">"plik.txt"</span>, <span class="st">"r"</span>) <span class="kw">as</span> plik:
+    zawartosc = plik.<span class="fn">read</span>()
+<span class="fn">print</span>(zawartosc)</pre></div>
+      <div class="card"><div class="badge b-orange">dopisz "a"</div><div class="card-label">Dopisz do pliku</div><div class="card-desc">"a" = append. Dopisuje na końcu — zachowuje co było.</div><pre><span class="kw">with</span> <span class="fn">open</span>(<span class="st">"plik.txt"</span>, <span class="st">"a"</span>) <span class="kw">as</span> plik:
+    plik.<span class="fn">write</span>(y + <span class="st">"\n"</span>)
+<span class="cm"># \n = nowa linia</span></pre></div>
+      <div class="card"><div class="badge b-orange">json.dump / json.load</div><div class="card-label">Zapisz i odczytaj słownik</div><div class="card-desc">JSON zamienia słownik na tekst i z powrotem.</div><pre><span class="kw">import</span> json
+<span class="cm"># zapis:</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"plik.json"</span>, <span class="st">"w"</span>) <span class="kw">as</span> plik:
+    json.<span class="fn">dump</span>(slownik, plik)
+<span class="cm"># odczyt:</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"plik.json"</span>, <span class="st">"r"</span>) <span class="kw">as</span> plik:
+    slownik = json.<span class="fn">load</span>(plik)</pre></div>
+    </div>
+  </div>
+
+  <!-- OBSŁUGA BŁĘDÓW -->
+  <div class="section">
+    <div class="section-title">Obsługa błędów</div>
+    <div class="cards">
+      <div class="card"><div class="badge b-pink">try/except</div><div class="card-label">Złap błąd</div><div class="card-desc">Zamiast się wysypać — zareaguj normalnie.</div><pre><span class="kw">try</span>:
+    waga = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"Ile ważysz? "</span>))
+<span class="kw">except</span> ValueError:
+    <span class="fn">print</span>(<span class="st">"To nie jest liczba!"</span>)</pre></div>
+      <div class="card"><div class="badge b-pink">while + break</div><div class="card-label">Pytaj dopóki poprawne</div><div class="card-desc">while True = pętla nieskończona, break = wyjdź gdy się uda.</div><pre><span class="kw">while</span> <span class="kw">True</span>:
+    <span class="kw">try</span>:
+        waga = <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"Ile ważysz? "</span>))
+        <span class="kw">break</span>  <span class="cm"># wyjdź gdy ok!</span>
+    <span class="kw">except</span> ValueError:
+        <span class="fn">print</span>(<span class="st">"Spróbuj jeszcze raz!"</span>)</pre></div>
+    </div>
+  </div>
+
+  <div class="tip"><strong>Pamiętaj:</strong> = to przypisanie (<code>name = "Jowita"</code>), a == to porównanie (<code>if name == "Jowita"</code>). Wcięcie (spacja przed kodem) mówi Pythonowi co należy do pętli lub funkcji.</div>
+</div>
+</body>
+</html>
