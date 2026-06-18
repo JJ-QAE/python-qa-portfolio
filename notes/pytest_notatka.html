@@ -216,7 +216,92 @@ python_files = test_*.py api_test*.py</pre>
     </div>
   </div>
 
-  <div class="tip"><strong>Złota zasada pytest:</strong> funkcja przyjmuje parametry i zwraca wynik — nigdy input() ani print() w środku. Test sprawdza wynik z assert. Przy liczbach z przecinkiem zawsze round(). Oczekiwane wartości w parametrize musisz policzyć ręcznie.</div>
+  <!-- FIXTURE SCOPES -->
+  <div class="section">
+    <div class="section-title">Fixture Scopes</div>
+    <div class="cards">
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="badge b-blue">scope</div>
+        <div class="card-label">Kiedy fixture ma się uruchamiać</div>
+        <div class="card-desc">Scope mówi pytest kiedy fixture ma się uruchomić. Dla testów API zawsze używaj scope="session" — mniej zapytań do serwera, szybsze testy.</div>
+        <pre><span class="kw">import</span> pytest
+<span class="kw">import</span> requests
+
+<span class="cm"># function (domyślny) — uruchamia się przed KAŻDYM testem</span>
+@pytest.fixture(scope=<span class="st">"function"</span>)
+<span class="kw">def</span> <span class="fn">api_function</span>():
+    <span class="fn">print</span>(<span class="st">">>> odpalam przed każdym testem"</span>)
+    <span class="kw">return</span> requests.<span class="fn">get</span>(<span class="st">"https://jsonplaceholder.typicode.com/posts/1"</span>)
+
+<span class="cm"># session — uruchamia się RAZ dla całej sesji testów</span>
+@pytest.fixture(scope=<span class="st">"session"</span>)
+<span class="kw">def</span> <span class="fn">api_session</span>():
+    <span class="fn">print</span>(<span class="st">">>> odpalam tylko raz!"</span>)
+    <span class="kw">return</span> requests.<span class="fn">get</span>(<span class="st">"https://jsonplaceholder.typicode.com/posts/1"</span>)
+
+<span class="cm"># scope="function" → 10 testów = 10 zapytań do API</span>
+<span class="cm"># scope="session"  → 10 testów = 1 zapytanie do API</span></pre>
+        <table style="width:100%;border-collapse:collapse;margin-top:0.75rem;font-family:'JetBrains Mono',monospace;font-size:0.8rem;">
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:0.4rem 0.6rem;color:var(--muted);">Scope</th>
+            <th style="text-align:left;padding:0.4rem 0.6rem;color:var(--muted);">Kiedy się uruchamia</th>
+            <th style="text-align:left;padding:0.4rem 0.6rem;color:var(--muted);">Kiedy używać</th>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.4rem 0.6rem;color:var(--accent3);">function</td>
+            <td style="padding:0.4rem 0.6rem;color:var(--text);">przed każdym testem</td>
+            <td style="padding:0.4rem 0.6rem;color:var(--muted);">dane które mogą się zmieniać</td>
+          </tr>
+          <tr>
+            <td style="padding:0.4rem 0.6rem;color:var(--accent2);">session</td>
+            <td style="padding:0.4rem 0.6rem;color:var(--text);">raz dla wszystkich testów</td>
+            <td style="padding:0.4rem 0.6rem;color:var(--muted);">zapytania API, wolne operacje</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKERS -->
+  <div class="section">
+    <div class="section-title">Markers</div>
+    <div class="cards">
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="badge b-orange">@pytest.mark</div>
+        <div class="card-label">Oznaczaj i filtruj testy</div>
+        <div class="card-desc">Markers pozwalają oznaczać testy i uruchamiać je wybiórczo. Własne markery musisz zarejestrować w pytest.ini — inaczej pytest pokaże warning.</div>
+        <pre><span class="kw">import</span> pytest
+
+<span class="cm"># skip — pomiń test z powodem</span>
+@pytest.mark.skip(reason=<span class="st">"API tymczasowo niedostępne"</span>)
+<span class="kw">def</span> <span class="fn">test_pominiety</span>():
+    <span class="kw">assert</span> response.status_code == <span class="nu">200</span>
+
+<span class="cm"># slow — własny marker dla wolnych testów</span>
+@pytest.mark.slow
+<span class="kw">def</span> <span class="fn">test_wolny</span>():
+    response = requests.<span class="fn">get</span>(<span class="st">"https://jsonplaceholder.typicode.com/posts"</span>)
+    <span class="kw">assert</span> <span class="fn">len</span>(response.<span class="fn">json</span>()) == <span class="nu">100</span>
+
+<span class="cm"># uruchamianie z markerami:</span>
+<span class="cm"># pytest -m slow          → tylko testy slow</span>
+<span class="cm"># pytest -m "not slow"    → wszystkie OPRÓCZ slow</span>
+<span class="cm"># pytest -v -s            → szczegółowy wynik + printy</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="badge b-orange">pytest.ini</div>
+        <div class="card-label">Rejestracja markerów</div>
+        <div class="card-desc">Bez rejestracji pytest pokaże warning o nieznanym markerze.</div>
+        <pre>[pytest]
+python_files = test_*.py api_test*.py
+markers =
+    slow: marks tests as slow</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip"><strong>Złota zasada pytest:</strong> funkcja przyjmuje parametry i zwraca wynik — nigdy input() ani print() w środku. Test sprawdza wynik z assert. Przy liczbach z przecinkiem zawsze round(). Oczekiwane wartości w parametrize musisz policzyć ręcznie. scope="session" = fixture odpala się raz dla całej sesji.</div>
 </div>
 </body>
 </html>
