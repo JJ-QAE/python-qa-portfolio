@@ -301,7 +301,43 @@ markers =
     </div>
   </div>
 
-  <div class="tip"><strong>Złota zasada pytest:</strong> funkcja przyjmuje parametry i zwraca wynik — nigdy input() ani print() w środku. Test sprawdza wynik z assert. Przy liczbach z przecinkiem zawsze round(). Oczekiwane wartości w parametrize musisz policzyć ręcznie. scope="session" = fixture odpala się raz dla całej sesji.</div>
+  <!-- MONKEYPATCH -->
+  <div class="section">
+    <div class="section-title">Monkeypatch</div>
+    <div class="cards">
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="badge b-pink">monkeypatch</div>
+        <div class="card-label">Testuj bez internetu — podmień prawdziwe na fałszywe</div>
+        <div class="card-desc">Monkeypatch podmienia prawdziwe zapytanie API na fałszywe — test działa zawsze, bez internetu. Używaj gdy API jest niestabilne, płatne, lub testy mają działać w CI/CD.</div>
+        <pre><span class="kw">import</span> pytest
+<span class="kw">import</span> requests
+
+<span class="cm"># 1. Fałszywa odpowiedź — udaje prawdziwy response</span>
+<span class="kw">class</span> <span class="fn">FakeResponse</span>:
+    status_code = <span class="nu">200</span>
+    <span class="kw">def</span> <span class="fn">json</span>(self):
+        <span class="kw">return</span> {<span class="st">"id"</span>: <span class="nu">1</span>, <span class="st">"title"</span>: <span class="st">"Fake Post"</span>, <span class="st">"userId"</span>: <span class="nu">1</span>}
+
+<span class="cm"># 2. monkeypatch podmienia requests.get na funkcję zwracającą FakeResponse</span>
+<span class="kw">def</span> <span class="fn">test_get_post</span>(monkeypatch):
+    <span class="kw">def</span> <span class="fn">fake_get</span>(url):
+        <span class="kw">return</span> <span class="fn">FakeResponse</span>()
+
+    monkeypatch.<span class="fn">setattr</span>(requests, <span class="st">"get"</span>, fake_get)
+
+    response = requests.<span class="fn">get</span>(<span class="st">"https://jsonplaceholder.typicode.com/posts/1"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="nu">200</span>
+    <span class="kw">assert</span> response.<span class="fn">json</span>()[<span class="st">"title"</span>] == <span class="st">"Fake Post"</span>
+
+<span class="cm"># bez monkeypatch → 0.6s+ (prawdziwe zapytanie do API)</span>
+<span class="cm"># z monkeypatch   → 0.02s  (brak zapytania — zawsze działa!)</span>
+
+<span class="cm"># Uwaga: test jest POZA klasą FakeResponse!</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip"><strong>Złota zasada pytest:</strong> funkcja przyjmuje parametry i zwraca wynik — nigdy input() ani print() w środku. Test sprawdza wynik z assert. Przy liczbach z przecinkiem zawsze round(). Oczekiwane wartości w parametrize musisz policzyć ręcznie. scope="session" = fixture odpala się raz dla całej sesji. monkeypatch = podmień prawdziwe na fałszywe.</div>
 </div>
 </body>
 </html>

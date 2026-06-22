@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gherkin & pytest-bdd – Notatka</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  header {
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #58a6ff;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  nav { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  nav a {
+    color: #8b949e;
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+
+  nav a:hover { color: #c9d1d9; border-color: #30363d; background: #21262d; }
+  nav a.active { color: #58a6ff; border-color: #388bfd40; background: #388bfd15; }
+
+  .hero {
+    background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+    border-bottom: 1px solid #30363d;
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: #238636;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #e6edf3;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero p {
+    color: #8b949e;
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  section { margin-bottom: 3rem; }
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #e6edf3;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #21262d;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 1.2em;
+    background: #238636;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #79c0ff;
+    margin: 1.25rem 0 0.6rem;
+  }
+
+  p { margin-bottom: 0.75rem; color: #c9d1d9; }
+
+  pre {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: 0.75rem 0 1rem;
+  }
+
+  .keyword { color: #ff7b72; font-weight: 600; }
+  .string  { color: #a5d6ff; }
+  .comment { color: #8b949e; font-style: italic; }
+  .step-given { color: #ffa657; }
+  .step-when  { color: #79c0ff; }
+  .step-then  { color: #56d364; }
+  .step-and   { color: #d2a8ff; }
+  .decorator  { color: #d2a8ff; }
+  .func-name  { color: #79c0ff; }
+  .param      { color: #ffa657; }
+  .import-kw  { color: #ff7b72; }
+  .module     { color: #a5d6ff; }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+
+  .card-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 0.35rem;
+  }
+
+  .card p { font-size: 0.875rem; color: #8b949e; margin: 0; }
+
+  .given .card-label { color: #ffa657; }
+  .when  .card-label { color: #79c0ff; }
+  .then  .card-label { color: #56d364; }
+  .and   .card-label { color: #d2a8ff; }
+  .bg    .card-label { color: #f78166; }
+  .so    .card-label { color: #e3b341; }
+
+  .table-wrap { overflow-x: auto; margin: 1rem 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  th {
+    background: #21262d;
+    color: #8b949e;
+    text-align: left;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 0.6rem 1rem;
+    border-top: 1px solid #21262d;
+    vertical-align: top;
+  }
+
+  tr:hover td { background: #161b22; }
+
+  code {
+    background: #21262d;
+    color: #a5d6ff;
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    font-family: 'Consolas', monospace;
+    font-size: 0.85em;
+  }
+
+  .tip {
+    background: #0d419d20;
+    border: 1px solid #388bfd40;
+    border-left: 3px solid #58a6ff;
+    border-radius: 6px;
+    padding: 0.85rem 1.1rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: #a5d6ff;
+  }
+
+  .warn {
+    background: #3d1f0060;
+    border: 1px solid #e3b34140;
+    border-left: 3px solid #e3b341;
+    border-radius: 6px;
+    padding: 0.85rem 1.1rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: #e3b341;
+  }
+
+  .step-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+
+  .step-box {
+    padding: 0.5rem 1.1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .arrow {
+    color: #30363d;
+    font-size: 1.2rem;
+    padding: 0 0.4rem;
+  }
+
+  .sb-feature  { background: #21262d; color: #e6edf3; }
+  .sb-scenario { background: #21262d; color: #e6edf3; }
+  .sb-given    { background: #3d2b0060; color: #ffa657; border: 1px solid #ffa65740; }
+  .sb-when     { background: #0d2d6060; color: #79c0ff; border: 1px solid #79c0ff40; }
+  .sb-then     { background: #0d3d2060; color: #56d364; border: 1px solid #56d36440; }
+
+  .project-tree {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    font-family: 'Consolas', monospace;
+    font-size: 0.875rem;
+    line-height: 2;
+  }
+
+  .tree-folder { color: #79c0ff; font-weight: 600; }
+  .tree-file   { color: #c9d1d9; }
+  .tree-feature { color: #56d364; }
+  .tree-py     { color: #ffa657; }
+  .tree-cfg    { color: #d2a8ff; }
+  .tree-comment { color: #8b949e; font-style: italic; }
+
+  footer {
+    text-align: center;
+    color: #484f58;
+    font-size: 0.8rem;
+    padding: 2rem;
+    border-top: 1px solid #21262d;
+    margin-top: 2rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="index.html">🧪 QA Portfolio</a>
+  <nav>
+    <a href="python_notatka.html">Python</a>
+    <a href="pytest_notatka.html">pytest</a>
+    <a href="api_notatka.html">API</a>
+    <a href="sql_notatka.html">SQL</a>
+    <a href="git_notatka.html">Git</a>
+    <a href="gherkin_notatka.html" class="active">Gherkin</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">BDD</div>
+  <h1>Gherkin & pytest-bdd</h1>
+  <p>Behavior-Driven Development – testy pisane ludzkim językiem, uruchamiane przez Pythona</p>
+</div>
+
+<main>
+
+  <!-- CO TO JEST BDD -->
+  <section>
+    <h2>Co to jest BDD i Gherkin?</h2>
+    <p><strong>BDD (Behavior-Driven Development)</strong> to podejście do testowania, w którym scenariusze testowe są pisane w języku naturalnym — zrozumiałym dla programistów, testerów <em>i</em> product ownerów.</p>
+    <p><strong>Gherkin</strong> to język używany do pisania tych scenariuszy. Pliki mają rozszerzenie <code>.feature</code>. Sam w sobie to tylko tekst — żeby działał jako test, potrzebuje frameworka.</p>
+
+    <div class="card-grid" style="margin-top: 1.25rem;">
+      <div class="card">
+        <div class="card-label" style="color:#56d364;">Python</div>
+        <p>pytest-bdd, behave</p>
+      </div>
+      <div class="card">
+        <div class="card-label" style="color:#79c0ff;">JavaScript</div>
+        <p>Cucumber.js</p>
+      </div>
+      <div class="card">
+        <div class="card-label" style="color:#ffa657;">Java</div>
+        <p>Cucumber</p>
+      </div>
+      <div class="card">
+        <div class="card-label" style="color:#d2a8ff;">C#</div>
+        <p>SpecFlow</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRUKTURA -->
+  <section>
+    <h2>Przepływ: Feature → Scenario → Kroki</h2>
+
+    <div class="step-flow">
+      <div class="step-box sb-feature">Feature</div>
+      <span class="arrow">→</span>
+      <div class="step-box sb-scenario">Scenario</div>
+      <span class="arrow">→</span>
+      <div class="step-box sb-given">Given</div>
+      <span class="arrow">→</span>
+      <div class="step-box sb-when">When</div>
+      <span class="arrow">→</span>
+      <div class="step-box sb-then">Then</div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card given">
+        <div class="card-label">Given</div>
+        <p>Stan wyjściowy. Co jest prawdą na starcie.</p>
+      </div>
+      <div class="card when">
+        <div class="card-label">When</div>
+        <p>Akcja. Co robi użytkownik.</p>
+      </div>
+      <div class="card then">
+        <div class="card-label">Then</div>
+        <p>Rezultat. Co sprawdzamy.</p>
+      </div>
+      <div class="card and">
+        <div class="card-label">And / But</div>
+        <p>Kontynuacja poprzedniego kroku.</p>
+      </div>
+      <div class="card bg">
+        <div class="card-label">Background</div>
+        <p>Wspólne Given dla wszystkich scenariuszy w pliku.</p>
+      </div>
+      <div class="card so">
+        <div class="card-label">Scenario Outline</div>
+        <p>Parametryzacja — jak @parametrize w pytest.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRZYKŁAD FEATURE -->
+  <section>
+    <h2>Przykład pliku .feature</h2>
+
+<pre><span class="keyword">Feature:</span> <span class="string">Logowanie użytkownika</span>
+
+  <span class="comment"># Background działa jak setup – wykonuje się przed każdym scenariuszem</span>
+  <span class="keyword">Background:</span>
+    <span class="step-given">Given</span> użytkownik jest na stronie logowania
+
+  <span class="keyword">Scenario:</span> <span class="string">Pomyślne logowanie</span>
+    <span class="step-when">When</span> wpisuje login <span class="string">"jowita@test.com"</span> i hasło <span class="string">"Admin123"</span>
+    <span class="step-then">Then</span> zostaje przekierowany na stronę główną
+    <span class="step-and">And</span> widzi komunikat <span class="string">"Witaj, Jowita!"</span>
+
+  <span class="keyword">Scenario:</span> <span class="string">Błędne hasło</span>
+    <span class="step-when">When</span> wpisuje login <span class="string">"jowita@test.com"</span> i hasło <span class="string">"złehasło"</span>
+    <span class="step-then">Then</span> widzi błąd <span class="string">"Nieprawidłowe dane logowania"</span>
+
+  <span class="comment"># Scenario Outline = parametryzacja (jak @pytest.mark.parametrize)</span>
+  <span class="keyword">Scenario Outline:</span> <span class="string">Walidacja formularza</span>
+    <span class="step-when">When</span> wpisuje login <span class="string">"&lt;login&gt;"</span> i hasło <span class="string">"&lt;hasło&gt;"</span>
+    <span class="step-then">Then</span> widzi błąd <span class="string">"&lt;komunikat&gt;"</span>
+
+    <span class="keyword">Examples:</span>
+      | login           | hasło    | komunikat                  |
+      |                 | Admin123 | Login nie może być pusty   |
+      | jowita@test.com |          | Hasło nie może być puste   |
+      | niemail         | Admin123 | Podaj prawidłowy email     |</pre>
+
+    <div class="warn">⚠️ Tekst w pliku <code>.feature</code> musi być <strong>identyczny</strong> z tekstem w dekoratorach Pythona — co do literki. Inaczej pytest-bdd rzuci błędem.</div>
+  </section>
+
+  <!-- STRUKTURA PROJEKTU -->
+  <section>
+    <h2>Struktura projektu</h2>
+
+    <div class="project-tree">
+<span class="tree-folder">projekt/</span>
+├── <span class="tree-folder">features/</span>
+│   └── <span class="tree-feature">logowanie.feature</span>      <span class="tree-comment">← plik z scenariuszami</span>
+├── <span class="tree-folder">tests/</span>
+│   └── <span class="tree-py">test_logowanie.py</span>      <span class="tree-comment">← implementacja kroków</span>
+├── <span class="tree-py">conftest.py</span>               <span class="tree-comment">← wspólne fixtures</span>
+└── <span class="tree-cfg">pytest.ini</span>                <span class="tree-comment">← konfiguracja pytest</span>
+    </div>
+  </section>
+
+  <!-- IMPLEMENTACJA -->
+  <section>
+    <h2>Implementacja kroków w Pythonie</h2>
+
+    <h3>conftest.py — wspólny fixture</h3>
+<pre><span class="import-kw">import</span> <span class="module">pytest</span>
+
+<span class="decorator">@pytest.fixture</span>
+<span class="keyword">def</span> <span class="func-name">dane_logowania</span>():
+    <span class="comment"># Słownik przekazywany między krokami Given → When → Then</span>
+    <span class="keyword">return</span> {}</pre>
+
+    <h3>test_logowanie.py — kroki</h3>
+<pre><span class="import-kw">from</span> <span class="module">pytest_bdd</span> <span class="import-kw">import</span> scenarios, given, when, then, parsers
+
+<span class="comment"># Podpinamy plik .feature</span>
+<span class="func-name">scenarios</span>(<span class="string">"../features/logowanie.feature"</span>)
+
+<span class="comment"># Symulowana baza użytkowników</span>
+UŻYTKOWNICY = {
+    <span class="string">"jowita@test.com"</span>: <span class="string">"Admin123"</span>
+}
+
+<span class="comment"># ── GIVEN ──────────────────────────────────────────────────────</span>
+<span class="decorator">@given</span>(parsers.<span class="func-name">parse</span>(<span class="string">'użytkownik podaje login "{login}" i hasło "{hasło}"'</span>))
+<span class="keyword">def</span> <span class="func-name">podaj_dane</span>(dane_logowania, <span class="param">login</span>, <span class="param">hasło</span>):
+    dane_logowania[<span class="string">"login"</span>] = login
+    dane_logowania[<span class="string">"hasło"</span>] = hasło
+
+<span class="comment"># ── WHEN ───────────────────────────────────────────────────────</span>
+<span class="decorator">@when</span>(<span class="string">"system sprawdza dane"</span>)
+<span class="keyword">def</span> <span class="func-name">sprawdz_dane</span>():
+    <span class="keyword">pass</span>  <span class="comment"># logika jest w then</span>
+
+<span class="comment"># ── THEN ───────────────────────────────────────────────────────</span>
+<span class="decorator">@then</span>(<span class="string">"użytkownik zostaje zalogowany"</span>)
+<span class="keyword">def</span> <span class="func-name">zalogowany</span>(dane_logowania):
+    login = dane_logowania[<span class="string">"login"</span>]
+    hasło = dane_logowania[<span class="string">"hasło"</span>]
+    <span class="keyword">assert</span> UŻYTKOWNICY.<span class="func-name">get</span>(login) == hasło
+
+<span class="decorator">@then</span>(parsers.<span class="func-name">parse</span>(<span class="string">'użytkownik widzi błąd "{komunikat}"'</span>))
+<span class="keyword">def</span> <span class="func-name">blad_logowania</span>(dane_logowania, <span class="param">komunikat</span>):
+    login = dane_logowania[<span class="string">"login"</span>]
+    hasło = dane_logowania[<span class="string">"hasło"</span>]
+    <span class="keyword">assert</span> UŻYTKOWNICY.<span class="func-name">get</span>(login) != hasło</pre>
+
+    <div class="tip">💡 <code>parsers.parse(...)</code> służy do wyciągania zmiennych z tekstu. Cudzysłowy <code>"{login}"</code> w pliku .feature odpowiadają parametrom funkcji Pythona o tej samej nazwie.</div>
+  </section>
+
+  <!-- ŚCIĄGAWKA DEKORATORÓW -->
+  <section>
+    <h2>Ściągawka dekoratorów</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Dekorator</th>
+            <th>Odpowiada krokowi</th>
+            <th>Kiedy używać</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>@given("tekst")</code></td>
+            <td style="color:#ffa657;">Given</td>
+            <td>Ustawiasz stan wyjściowy</td>
+          </tr>
+          <tr>
+            <td><code>@when("tekst")</code></td>
+            <td style="color:#79c0ff;">When</td>
+            <td>Wykonujesz akcję</td>
+          </tr>
+          <tr>
+            <td><code>@then("tekst")</code></td>
+            <td style="color:#56d364;">Then</td>
+            <td>Sprawdzasz rezultat (assert)</td>
+          </tr>
+          <tr>
+            <td><code>parsers.parse("... {var}")</code></td>
+            <td style="color:#ffa657;">Given / When / Then</td>
+            <td>Wyciągasz zmienne z tekstu</td>
+          </tr>
+          <tr>
+            <td><code>scenarios("plik.feature")</code></td>
+            <td>—</td>
+            <td>Podpinasz plik .feature do testu</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- INSTALACJA I URUCHOMIENIE -->
+  <section>
+    <h2>Instalacja i uruchomienie</h2>
+
+<pre><span class="comment"># Instalacja</span>
+pip install pytest-bdd
+
+<span class="comment"># Uruchomienie testów</span>
+pytest tests/ -v
+
+<span class="comment"># Przykładowy wynik:</span>
+<span class="step-then">PASSED</span> tests/test_logowanie.py::test_pomyslne_logowanie
+<span class="step-then">PASSED</span> tests/test_logowanie.py::test_bledne_haslo</pre>
+  </section>
+
+  <!-- KIEDY UŻYWAĆ -->
+  <section>
+    <h2>Kiedy używać Gherkina?</h2>
+
+    <div class="card-grid">
+      <div class="card" style="border-color: #238636;">
+        <div class="card-label" style="color:#56d364;">✓ Warto</div>
+        <p>Duże zespoły — PO pisze scenariusze, QA implementuje</p>
+      </div>
+      <div class="card" style="border-color: #238636;">
+        <div class="card-label" style="color:#56d364;">✓ Warto</div>
+        <p>Gdy wymagania biznesowe są złożone i często się zmieniają</p>
+      </div>
+      <div class="card" style="border-color: #8b949e;">
+        <div class="card-label" style="color:#8b949e;">△ Opcjonalnie</div>
+        <p>Małe startupy — czysty pytest często wystarczy</p>
+      </div>
+      <div class="card" style="border-color: #8b949e;">
+        <div class="card-label" style="color:#8b949e;">△ Mile widziany</div>
+        <p>Wiele ogłoszeń wymienia jako "nice to have"</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  github.com/JJ-QAE/python-qa-portfolio &nbsp;·&nbsp; Gherkin & pytest-bdd
+</footer>
+
+</body>
+</html>
